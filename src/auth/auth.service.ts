@@ -11,7 +11,10 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async login(email: string, password: string): Promise<AuthEntity> {
     // Step 1: Fetch a user with the given email

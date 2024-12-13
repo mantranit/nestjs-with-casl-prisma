@@ -25,4 +25,7 @@ export class UserEntity implements User {
 
   @Exclude()
   password: string;
+
+  @Exclude()
+  isAdmin: boolean;
 }

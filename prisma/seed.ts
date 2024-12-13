@@ -20,6 +20,7 @@ async function main() {
       email: 'sabin@adams.com',
       name: 'Sabin Adams',
       password: passwordSabin,
+      isAdmin: true,
     },
   });
 
@@ -46,7 +47,7 @@ async function main() {
       body: 'Support for MongoDB has been one of the most requested features since the initial release of...',
       description:
         "We are excited to share that today's Prisma ORM release adds stable support for MongoDB!",
-      published: false,
+      isPublished: false,
       authorId: user1.id,
     },
   });
@@ -61,7 +62,7 @@ async function main() {
       body: 'Our engineers have been working hard, issuing new releases with many improvements...',
       description:
         'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
-      published: true,
+      isPublished: true,
       authorId: user2.id,
     },
   });
@@ -74,7 +75,7 @@ async function main() {
       body: 'Prisma Client extensions provide a powerful new way to add functionality to Prisma in a type-safe manner...',
       description:
         'This article will explore various ways you can use Prisma Client extensions to add custom functionality to Prisma Client..',
-      published: true,
+      isPublished: true,
     },
   });
 

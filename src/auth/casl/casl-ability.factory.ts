@@ -1,47 +1,52 @@
+import { Injectable } from '@nestjs/common';
+import { createPrismaAbility, PrismaQuery, Subjects } from '@casl/prisma';
+
 import {
-  createAbilityFactory,
-  createAccessibleByFactory,
-  prismaQuery,
-  ExtractModelName,
-  Model,
-} from '@casl/prisma/runtime';
-import { hkt } from '@casl/ability';
-import type { Prisma, PrismaClient } from './generated/client';
+  PureAbility,
+  AbilityBuilder,
+  subject,
+  ExtractSubjectType,
+} from '@casl/ability';
+import { User, Article } from '@prisma/client';
+import { InferSubjects } from '@casl/ability';
 
-type ModelName = Prisma.ModelName;
-type ModelWhereInput = {
-  [K in Prisma.ModelName]: Uncapitalize<K> extends keyof PrismaClient
-    ? Extract<
-        Parameters<PrismaClient[Uncapitalize<K>]['findFirst']>[0],
-        { where?: any }
-      >['where']
-    : never;
-};
-
-type WhereInput<TModelName extends Prisma.ModelName> = Extract<
-  ModelWhereInput[TModelName],
-  Record<any, any>
->;
-
-interface PrismaQueryTypeFactory extends hkt.GenericFactory {
-  produce: WhereInput<ExtractModelName<this[0], ModelName>>;
+export enum Action {
+  Manage = 'manage',
+  Create = 'create',
+  Read = 'read',
+  Update = 'update',
+  Delete = 'delete',
 }
 
-type PrismaModel = Model<Record<string, any>, string>;
-// Higher Order type that allows to infer passed in Prisma Model name
-export type PrismaQuery<T extends PrismaModel = PrismaModel> = WhereInput<
-  ExtractModelName<T, ModelName>
-> &
-  hkt.Container<PrismaQueryTypeFactory>;
+export type AppSubjects =
+  | 'all'
+  | Subjects<{
+      User: User;
+      Article: Article;
+    }>;
 
-type WhereInputPerModel = {
-  [K in ModelName]: WhereInput<K>;
-};
+export type AppAbility = PureAbility<[string, AppSubjects], PrismaQuery>;
 
-const createPrismaAbility = createAbilityFactory<ModelName, PrismaQuery>();
-const accessibleBy = createAccessibleByFactory<
-  WhereInputPerModel,
-  PrismaQuery
->();
+@Injectable()
+export class CaslAbilityFactory {
+  createForUser(user: User) {
+    const { can, cannot, build } = new AbilityBuilder<AppAbility>(
+      createPrismaAbility,
+    );
 
-export { createPrismaAbility, accessibleBy };
+    if (user.isAdmin) {
+      can(Action.Manage, 'all'); // read-write access to everything
+    } else {
+      // can(Action.Read, 'all'); // read-only access to everything
+    }
+
+    can(Action.Update, 'Article', { authorId: user.id });
+    cannot(Action.Delete, 'Article', { isPublished: true });
+
+    return build({
+      // Read https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types for details
+      detectSubjectType: (item) =>
+        item.constructor as ExtractSubjectType<InferSubjects<AppAbility>>,
+    });
+  }
+}

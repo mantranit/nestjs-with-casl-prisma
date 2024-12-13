@@ -12,11 +12,11 @@ export class ArticlesService {
   }
 
   findDrafts() {
-    return this.prisma.article.findMany({ where: { published: false } });
+    return this.prisma.article.findMany({ where: { isPublished: false } });
   }
 
   findAll() {
-    return this.prisma.article.findMany({ where: { published: true } });
+    return this.prisma.article.findMany({ where: { isPublished: true } });
   }
 
   findOne(id: number) {

@@ -21,6 +21,9 @@ import {
 } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
+import { PoliciesGuard } from 'src/auth/casl/policies.guard';
+import { CheckPolicies } from 'src/auth/casl/check-policies.decorator';
+import { Action, AppAbility } from 'src/auth/casl/casl-ability.factory';
 
 @Controller('users')
 @ApiTags('users')
@@ -34,7 +37,8 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, 'User'))
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserEntity, isArray: true })
   async findAll() {

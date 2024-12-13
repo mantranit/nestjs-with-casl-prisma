@@ -18,7 +18,7 @@ export class ArticleEntity implements Article {
   body: string;
 
   @ApiProperty()
-  published: boolean;
+  isPublished: boolean;
 
   @ApiProperty()
   createdAt: Date;
