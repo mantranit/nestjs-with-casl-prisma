@@ -43,16 +43,16 @@ $ npm run start:prod
 
 ## CASL example
 
-```bash
-  @Get()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, 'User'))
-  @ApiBearerAuth()
-  @ApiOkResponse({ type: UserEntity, isArray: true })
-  async findAll() {
-    const users = await this.usersService.findAll();
-    return users.map((user) => new UserEntity(user));
-  }
+```js
+@Get()
+@UseGuards(JwtAuthGuard, PoliciesGuard)
+@CheckPolicies((ability: AppAbility) => ability.can(Action.Read, 'User'))
+@ApiBearerAuth()
+@ApiOkResponse({ type: UserEntity, isArray: true })
+async findAll() {
+  const users = await this.usersService.findAll();
+  return users.map((user) => new UserEntity(user));
+}
 ```
 
 ## Run tests
