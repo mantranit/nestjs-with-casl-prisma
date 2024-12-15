@@ -39,6 +39,7 @@ async function main() {
       email: 'moderator@yopmail.com',
       name: 'Moderator',
       password: passwordModerator,
+      role: Role.MODERATOR,
     },
   });
 
@@ -55,6 +56,7 @@ async function main() {
       email: 'companyadmin@yopmail.com',
       name: 'Company Admin',
       password: passwordCompanyAdmin,
+      role: Role.COMPANY_ADMIN,
     },
   });
 
