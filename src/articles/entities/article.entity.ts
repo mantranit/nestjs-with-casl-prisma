@@ -6,7 +6,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 
 export class ArticleEntity implements Article {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   title: string;
@@ -27,7 +27,7 @@ export class ArticleEntity implements Article {
   updatedAt: Date;
 
   @ApiProperty({ required: false, nullable: true })
-  authorId: number | null;
+  authorId: string | null;
 
   @ApiProperty({ required: false, type: UserEntity })
   author?: UserEntity;

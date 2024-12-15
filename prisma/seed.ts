@@ -20,7 +20,7 @@ async function main() {
       email: 'sabin@adams.com',
       name: 'Sabin Adams',
       password: passwordSabin,
-      isAdmin: true,
+      role: 'ADMIN',
     },
   });
 

@@ -7,7 +7,7 @@ import {
   subject,
   ExtractSubjectType,
 } from '@casl/ability';
-import { User, Article } from '@prisma/client';
+import { User, Article, Role } from '@prisma/client';
 import { InferSubjects } from '@casl/ability';
 
 export enum Action {
@@ -34,10 +34,10 @@ export class CaslAbilityFactory {
       createPrismaAbility,
     );
 
-    if (user.isAdmin) {
+    if (user.role === Role.ADMIN) {
       can(Action.Manage, 'all'); // read-write access to everything
     } else {
-      // can(Action.Read, 'all'); // read-only access to everything
+      can(Action.Read, 'all'); // read-only access to everything
     }
 
     can(Action.Update, 'Article', { authorId: user.id });
