@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 // initialize the Prisma Client
@@ -8,31 +8,69 @@ const roundsOfHashing = 10;
 
 async function main() {
   // create two dummy users
-  const passwordSabin = await bcrypt.hash('password-sabin', roundsOfHashing);
-  const passwordAlex = await bcrypt.hash('password-alex', roundsOfHashing);
+  const passwordSuperadmin = await bcrypt.hash(
+    'password-superadmin',
+    roundsOfHashing,
+  );
 
   const user1 = await prisma.user.upsert({
-    where: { email: 'sabin@adams.com' },
+    where: { email: 'superadmin@yopmail.com' },
     update: {
-      password: passwordSabin,
+      password: passwordSuperadmin,
     },
     create: {
-      email: 'sabin@adams.com',
-      name: 'Sabin Adams',
-      password: passwordSabin,
-      role: 'ADMIN',
+      email: 'superadmin@yopmail.com',
+      name: 'Super Admin',
+      password: passwordSuperadmin,
+      role: Role.SUPER_ADMIN,
     },
   });
 
+  const passwordModerator = await bcrypt.hash(
+    'password-moderator',
+    roundsOfHashing,
+  );
   const user2 = await prisma.user.upsert({
-    where: { email: 'alex@ruheni.com' },
+    where: { email: 'moderator@yopmail.com' },
     update: {
-      password: passwordAlex,
+      password: passwordModerator,
     },
     create: {
-      email: 'alex@ruheni.com',
-      name: 'Alex Ruheni',
-      password: passwordAlex,
+      email: 'moderator@yopmail.com',
+      name: 'Moderator',
+      password: passwordModerator,
+    },
+  });
+
+  const passwordCompanyAdmin = await bcrypt.hash(
+    'password-companyadmin',
+    roundsOfHashing,
+  );
+  const user3 = await prisma.user.upsert({
+    where: { email: 'companyadmin@yopmail.com' },
+    update: {
+      password: passwordCompanyAdmin,
+    },
+    create: {
+      email: 'companyadmin@yopmail.com',
+      name: 'Company Admin',
+      password: passwordCompanyAdmin,
+    },
+  });
+
+  const passwordUser = await bcrypt.hash(
+    'password-companyadmin',
+    roundsOfHashing,
+  );
+  const user4 = await prisma.user.upsert({
+    where: { email: 'user@yopmail.com' },
+    update: {
+      password: passwordUser,
+    },
+    create: {
+      email: 'user@yopmail.com',
+      name: 'User',
+      password: passwordUser,
     },
   });
 
@@ -69,13 +107,16 @@ async function main() {
 
   const post3 = await prisma.article.upsert({
     where: { title: 'Prisma Client Just Became a Lot More Flexible' },
-    update: {},
+    update: {
+      authorId: user3.id,
+    },
     create: {
       title: 'Prisma Client Just Became a Lot More Flexible',
       body: 'Prisma Client extensions provide a powerful new way to add functionality to Prisma in a type-safe manner...',
       description:
         'This article will explore various ways you can use Prisma Client extensions to add custom functionality to Prisma Client..',
       isPublished: true,
+      authorId: user3.id,
     },
   });
 
