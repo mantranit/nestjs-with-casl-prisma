@@ -34,7 +34,7 @@ export class CaslAbilityFactory {
       createPrismaAbility,
     );
 
-    if (user.role === Role.ADMIN) {
+    if (user.role === Role.SUPER_ADMIN) {
       can(Action.Manage, 'all'); // read-write access to everything
     } else {
       can(Action.Read, 'all'); // read-only access to everything
