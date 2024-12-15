@@ -122,7 +122,7 @@ async function main() {
     },
   });
 
-  console.log({ user1, user2, post1, post2, post3 });
+  console.log({ user1, user2, user3, user4, post1, post2, post3 });
 }
 
 // execute the main function
