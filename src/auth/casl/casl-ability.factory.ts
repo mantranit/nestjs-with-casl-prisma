@@ -34,14 +34,18 @@ export class CaslAbilityFactory {
       createPrismaAbility,
     );
 
-    if (user.role === Role.SUPER_ADMIN) {
-      can(Action.Manage, 'all'); // read-write access to everything
+    if (user) {
+      if (user.role === Role.SUPER_ADMIN) {
+        can(Action.Manage, 'all'); // read-write access to everything
+      } else {
+        can(Action.Read, 'all'); // read-only access to everything
+      }
+
+      can(Action.Update, 'Article', { authorId: user.id });
+      cannot(Action.Delete, 'Article', { isPublished: true });
     } else {
       can(Action.Read, 'all'); // read-only access to everything
     }
-
-    can(Action.Update, 'Article', { authorId: user.id });
-    cannot(Action.Delete, 'Article', { isPublished: true });
 
     return build({
       // Read https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types for details
