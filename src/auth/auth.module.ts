@@ -9,6 +9,7 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CaslModule } from './casl/casl.module';
+import { SessionsModule } from 'src/sessions/sessions.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CaslModule } from './casl/casl.module';
     }),
     UsersModule,
     CaslModule,
+    SessionsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
