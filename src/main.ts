@@ -9,12 +9,18 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import cors from '@fastify/cors';
 
 async function bootstrap() {
+  const adapter = new FastifyAdapter({ logger: true });
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter({ logger: true }),
+    adapter,
   );
+  await app.register(cors, {
+    origin: ['http://localhost:5173'],
+    credentials: true,
+  });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
@@ -25,11 +31,13 @@ async function bootstrap() {
     .setTitle('NCPPS')
     .setDescription('The NCPPS API description')
     .setVersion('0.1')
+    .addServer('http://localhost:3000/api/', 'Local environment')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
 
+  app.setGlobalPrefix('api');
   await app.listen(3000);
 }
 bootstrap();

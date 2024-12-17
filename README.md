@@ -41,6 +41,10 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Swagger end point
+
+/api-docs
+
 ## CASL example
 
 ```js

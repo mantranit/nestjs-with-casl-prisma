@@ -3,6 +3,7 @@
 import { Session } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { Exclude } from 'class-transformer';
 
 export class SessionEntity implements Session {
   constructor({ user, ...data }: Partial<SessionEntity>) {
@@ -25,7 +26,7 @@ export class SessionEntity implements Session {
   @ApiProperty()
   createdAt: Date;
 
-  @ApiProperty()
+  @Exclude()
   userId: string;
 
   @ApiProperty({ type: UserEntity })

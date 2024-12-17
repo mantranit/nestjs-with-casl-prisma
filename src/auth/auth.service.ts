@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from './../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
-import { AuthEntity } from './entity/auth.entity';
 import * as bcrypt from 'bcrypt';
 import { SessionsService } from 'src/sessions/sessions.service';
+import { SessionEntity } from 'src/sessions/entities/session.entity';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +22,7 @@ export class AuthService {
     email: string,
     password: string,
     userAgent: string,
-  ): Promise<AuthEntity> {
+  ): Promise<SessionEntity> {
     // Step 1: Fetch a user with the given email
     const user = await this.prisma.user.findUnique({ where: { email } });
 
@@ -40,14 +40,12 @@ export class AuthService {
     }
 
     // Step 3: Generate a JWT token containing the user's ID and return it
+    const accessToken = this.jwtService.sign({ userId: user.id });
     await this.sessionsService.create({
-      accessToken: this.jwtService.sign({ userId: user.id }),
-      refreshToken: this.jwtService.sign({ userId: user.id }),
+      accessToken,
       userAgent,
       userId: user.id,
     });
-    return {
-      accessToken: this.jwtService.sign({ userId: user.id }),
-    };
+    return new SessionEntity(await this.sessionsService.findOne(accessToken));
   }
 }

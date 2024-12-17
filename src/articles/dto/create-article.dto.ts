@@ -32,5 +32,5 @@ export class CreateArticleDto {
   @IsBoolean()
   @IsOptional()
   @ApiProperty({ required: false, default: false })
-  published?: boolean = false;
+  isPublished?: boolean = false;
 }

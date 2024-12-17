@@ -7,19 +7,20 @@ export class SessionsService {
   constructor(private prisma: PrismaService) {}
 
   create(createSessionDto: CreateSessionDto) {
+    this.remove(createSessionDto.userId);
     return this.prisma.session.create({ data: createSessionDto });
   }
 
-  findOne(id: string) {
-    return this.prisma.session.findUnique({
-      where: { id },
+  findOne(accessToken: string) {
+    return this.prisma.session.findFirst({
+      where: { accessToken },
       include: {
         user: true,
       },
     });
   }
 
-  remove(id: string) {
-    return this.prisma.session.delete({ where: { id } });
+  remove(userId: string) {
+    return this.prisma.session.deleteMany({ where: { userId } });
   }
 }
