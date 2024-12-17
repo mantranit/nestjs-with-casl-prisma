@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role, UserStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 // initialize the Prisma Client
@@ -23,6 +23,7 @@ async function main() {
       name: 'Super Admin',
       password: passwordSuperadmin,
       role: Role.SUPER_ADMIN,
+      status: UserStatus.ACTIVE,
     },
   });
 
@@ -40,6 +41,7 @@ async function main() {
       name: 'Moderator',
       password: passwordModerator,
       role: Role.MODERATOR,
+      status: UserStatus.ACTIVE,
     },
   });
 
@@ -57,13 +59,11 @@ async function main() {
       name: 'Company Admin',
       password: passwordCompanyAdmin,
       role: Role.COMPANY_ADMIN,
+      status: UserStatus.ACTIVE,
     },
   });
 
-  const passwordUser = await bcrypt.hash(
-    'password-companyadmin',
-    roundsOfHashing,
-  );
+  const passwordUser = await bcrypt.hash('password-user', roundsOfHashing);
   const user4 = await prisma.user.upsert({
     where: { email: 'user@yopmail.com' },
     update: {
@@ -73,6 +73,7 @@ async function main() {
       email: 'user@yopmail.com',
       name: 'User',
       password: passwordUser,
+      status: UserStatus.ACTIVE,
     },
   });
 
