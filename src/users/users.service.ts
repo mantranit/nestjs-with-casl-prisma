@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { UserStatus } from '@prisma/client';
 
 export const roundsOfHashing = 10;
 
@@ -24,8 +25,25 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return this.prisma.user.findMany();
+  async countStatus() {
+    const [totalActive, totalPending, totalDisabled] = await Promise.all([
+      this.prisma.user.count({ where: { status: UserStatus.ACTIVE } }),
+      this.prisma.user.count({ where: { status: UserStatus.PENDING } }),
+      this.prisma.user.count({ where: { status: UserStatus.DISABLED } }),
+    ]);
+    return {
+      total: totalActive + totalPending + totalDisabled,
+      totalActive,
+      totalPending,
+      totalDisabled,
+    };
+  }
+
+  async findAll() {
+    return {
+      users: await this.prisma.user.findMany(),
+      count: await this.prisma.user.count(),
+    };
   }
 
   findOne(id: string) {

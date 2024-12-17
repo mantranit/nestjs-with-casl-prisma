@@ -24,11 +24,21 @@ import { JwtAuthGuard } from 'src/auth/jwt/jwt-auth.guard';
 import { PoliciesGuard } from 'src/auth/casl/policies.guard';
 import { CheckPolicies } from 'src/auth/casl/check-policies.decorator';
 import { Action, AppAbility } from 'src/auth/casl/casl-ability.factory';
+import { CountUserStatusEntity } from './entities/count-user-status.entity';
 
 @Controller('users')
 @ApiTags('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('count-status')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, 'User'))
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: CountUserStatusEntity })
+  async countStatus() {
+    return await this.usersService.countStatus();
+  }
 
   @Post()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -45,8 +55,11 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserEntity, isArray: true })
   async findAll() {
-    const users = await this.usersService.findAll();
-    return users.map((user) => new UserEntity(user));
+    const { users, count } = await this.usersService.findAll();
+    return {
+      users: users.map((user) => new UserEntity(user)),
+      count: count,
+    };
   }
 
   @Get(':id')
